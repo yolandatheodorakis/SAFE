@@ -5,8 +5,7 @@ import * as Font from 'expo-font';
 import {RootSiblingParent} from 'react-native-root-siblings';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-import Colors from './constants/Colors';
-import HomeScreen from './screens/HomeScreen';
+import AppNavigator from './navigation/AppNavigator';
 
 export default function App(props) {
 
@@ -42,8 +41,8 @@ export default function App(props) {
             <RootSiblingParent>
 				<SafeAreaProvider>
 					<View style={styles.container}>
-						{Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
-                        <HomeScreen />
+						{Platform.OS === 'ios' && <StatusBar barStyle='default'/>}
+                        <AppNavigator />
 					</View>
 				</SafeAreaProvider>
             </RootSiblingParent>
@@ -53,7 +52,6 @@ export default function App(props) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		backgroundColor: Colors.sage
+		flex: 1
 	}
 });
