@@ -8,6 +8,10 @@ import Colors from '../constants/Colors';
 export default function ContactsScreen() {
     const navigation = useNavigation();
 
+    const logout = () => {
+        navigation.navigate('LoginScreen');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>SAFE</Text>
@@ -38,7 +42,7 @@ export default function ContactsScreen() {
 
             </ScrollView>
 
-            <Text style={styles.logOutText} onPress={() => navigation.navigate('LoginScreen')}>Kirjaudu ulos</Text>
+            <Text style={styles.logOutText} onPress={() => logout()}>Kirjaudu ulos</Text>
             <View style={styles.navBar}>
                 <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('HomeScreen')}>
                     <Octicons name={'home'} size={25} color={Colors.sage} />

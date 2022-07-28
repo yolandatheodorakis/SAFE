@@ -1,12 +1,43 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
+import axios from 'axios';
 
 import Colors from '../constants/Colors';
 
 export default function CreateNewUserScreen() {
     const navigation = useNavigation();
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [register, setRegister] = useState(false);
+
+    const handleRegister = () => {
+        const configuration = {
+            method: 'post',
+            url: 'https://localhost:3000/register',
+            data: {
+                name,
+                email,
+                password
+            },
+        };
+        // Make the API call
+        axios(configuration)
+        .then((result) => {
+            setRegister(true);
+        })
+        .catch((error) => {
+            error = new Error();
+        });  
+        // If registering was successful
+        if (register) {
+            navigation.navigate('LoginScreen');
+            alert('Käyttäjän luonti onnistui! Voit nyt kirjautua ssään.');
+        } 
+    };
 
     return (
         <View style={styles.container}>
@@ -17,6 +48,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'person'} size={20} color={Colors.black} />
                     <TextInput 
+                        value={name}
+                        onChange={(text) => setName(text)}
                         placeholder='Nimi'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -26,6 +59,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'mention'} size={20} color={Colors.black} />
                     <TextInput 
+                        value={email}
+                        onChange={(text) => setEmail(text)}
                         placeholder='Sähköposti'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -35,6 +70,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'key'} size={20} color={Colors.black} />
                     <TextInput 
+                        value={password}
+                        onChange={(text) => setPassword(text)}
                         placeholder='Salasana'
                         placeholderTextColor='silver'
                         secureTextEntry={true}
@@ -42,7 +79,7 @@ export default function CreateNewUserScreen() {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('HomeScreen')}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => handleRegister()}>
                     <Text style={styles.loginButtonText}>Luo käyttäjä</Text>
                 </TouchableOpacity>
 

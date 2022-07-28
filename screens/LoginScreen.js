@@ -2,11 +2,39 @@ import React from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
+import axios from 'axios';
 
 import Colors from '../constants/Colors';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [login, setLogin] = useState(false);
+
+    const handleLogin = () => {
+        const configuration = {
+            method: 'post',
+            url: 'https://localhost:3000/login',
+            data: {
+                email,
+                password
+            },
+        };
+        // Make the API call
+        axios(configuration)
+        .then((result) => {
+            setLogin(true);
+        })
+        .catch((error) => {
+            error = new Error();
+        });  
+        // If logging in was successful
+        if (login) {
+            navigation.navigate('HomeScreen');
+        } 
+    };
 
     return (
         <View style={styles.container}>
@@ -17,6 +45,8 @@ export default function LoginScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'mention'} size={20} color={Colors.black} />
                     <TextInput 
+                        value={email}
+                        onChange={(text) => setEmail(text)}
                         placeholder='Sähköposti'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -26,6 +56,8 @@ export default function LoginScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'key'} size={20} color={Colors.black} />
                     <TextInput 
+                        value={password}
+                        onChange={(text) => setPassword(text)}
                         placeholder='Salasana'
                         placeholderTextColor='silver'
                         secureTextEntry={true}
@@ -33,7 +65,7 @@ export default function LoginScreen() {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('HomeScreen')}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
                     <Text style={styles.loginButtonText}>Kirjaudu sisään</Text>
                 </TouchableOpacity>
 
