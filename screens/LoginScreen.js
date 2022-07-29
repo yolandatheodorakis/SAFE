@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
@@ -45,8 +45,8 @@ export default function LoginScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'mention'} size={20} color={Colors.black} />
                     <TextInput 
-                        value={email}
-                        onChange={(text) => setEmail(text)}
+                        defaultValue={email}
+                        onChangeText={(text) => setEmail(text)}
                         placeholder='Sähköposti'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -56,8 +56,8 @@ export default function LoginScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'key'} size={20} color={Colors.black} />
                     <TextInput 
-                        value={password}
-                        onChange={(text) => setPassword(text)}
+                        defaultValue={password}
+                        onChangeText={(text) => setPassword(text)}
                         placeholder='Salasana'
                         placeholderTextColor='silver'
                         secureTextEntry={true}

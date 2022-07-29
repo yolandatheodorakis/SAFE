@@ -48,8 +48,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'person'} size={20} color={Colors.black} />
                     <TextInput 
-                        value={name}
-                        onChange={(text) => setName(text)}
+                        defaultValue={name}
+                        onChangeText={(text) => setName(text)}
                         placeholder='Nimi'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -59,8 +59,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'mention'} size={20} color={Colors.black} />
                     <TextInput 
-                        value={email}
-                        onChange={(text) => setEmail(text)}
+                        defaultValue={email}
+                        onChangeText={(text) => setEmail(text)}
                         placeholder='Sähköposti'
                         placeholderTextColor='silver'
                         style={styles.textInput}
@@ -70,8 +70,8 @@ export default function CreateNewUserScreen() {
                 <View style={styles.textInputContainer}>
                     <Octicons name={'key'} size={20} color={Colors.black} />
                     <TextInput 
-                        value={password}
-                        onChange={(text) => setPassword(text)}
+                        defaultValue={password}
+                        onChangeText={(text) => setPassword(text)}
                         placeholder='Salasana'
                         placeholderTextColor='silver'
                         secureTextEntry={true}
