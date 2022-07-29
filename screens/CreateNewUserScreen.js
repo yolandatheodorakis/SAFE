@@ -2,41 +2,47 @@ import React, {useState} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
-import axios from 'axios';
 
 import Colors from '../constants/Colors';
 
 export default function CreateNewUserScreen() {
     const navigation = useNavigation();
 
+    const API_URL = Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://192.168.43.51:3000';
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [register, setRegister] = useState(false);
 
-    const handleRegister = () => {
-        const configuration = {
-            method: 'post',
-            url: 'https://localhost:3000/register',
-            data: {
-                name,
-                email,
-                password
-            },
+    const onSubmitHandler = () => {
+        const data = {
+            email,
+            name,
+            password
         };
-        // Make the API call
-        axios(configuration)
-        .then((result) => {
-            setRegister(true);
+        fetch(`${API_URL}/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
         })
-        .catch((error) => {
-            error = new Error();
-        });  
-        // If registering was successful
-        if (register) {
-            navigation.navigate('LoginScreen');
-            alert('Käyttäjän luonti onnistui! Voit nyt kirjautua ssään.');
-        } 
+        .then(async res => { 
+            try {
+                const jsonRes = await res.json();
+                if (res.status !== 200) {
+                    console.log('error creating user');
+                } else {
+                    navigation.navigate('LoginScreen');
+                    alert('Käyttäjän luonti onnistui! Voit nyt kirjautua sisään.');
+                }
+            } catch (err) {
+                console.log(err);
+            };
+        })
+        .catch(err => {
+            console.log(err);
+        });
     };
 
     return (
@@ -79,7 +85,7 @@ export default function CreateNewUserScreen() {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => handleRegister()}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => onSubmitHandler()}>
                     <Text style={styles.loginButtonText}>Luo käyttäjä</Text>
                 </TouchableOpacity>
 
@@ -89,7 +95,7 @@ export default function CreateNewUserScreen() {
 
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {

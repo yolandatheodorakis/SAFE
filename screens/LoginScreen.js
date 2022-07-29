@@ -2,38 +2,67 @@ import React, {useState} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
-import axios from 'axios';
 
 import Colors from '../constants/Colors';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
 
+    const API_URL = Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://192.168.43.51:3000';
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [login, setLogin] = useState(false);
 
-    const handleLogin = () => {
-        const configuration = {
-            method: 'post',
-            url: 'https://localhost:3000/login',
-            data: {
-                email,
-                password
+    const onLoggedIn = token => {
+        fetch(`${API_URL}/private`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-        };
-        // Make the API call
-        axios(configuration)
-        .then((result) => {
-            setLogin(true);
         })
-        .catch((error) => {
-            error = new Error();
-        });  
-        // If logging in was successful
-        if (login) {
-            navigation.navigate('HomeScreen');
-        } 
+        .then(async res => { 
+            try {
+                const jsonRes = await res.json();
+                if (res.status === 200) {
+                    navigation.navigate('HomeScreen');
+                }
+            } catch (err) {
+                console.log(err);
+            };
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    };
+
+    const onSubmitHandler = () => {
+        const data = {
+            email,
+            password
+        };
+        fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(async res => { 
+            try {
+                const jsonRes = await res.json();
+                if (res.status !== 200) {
+                    console.log('error logging in');
+                } else {
+                    onLoggedIn(jsonRes.token);
+                }
+            } catch (err) {
+                console.log(err);
+            };
+        })
+        .catch(err => {
+            console.log(err);
+        });
     };
 
     return (
@@ -65,7 +94,7 @@ export default function LoginScreen() {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => onSubmitHandler()}>
                     <Text style={styles.loginButtonText}>Kirjaudu sisään</Text>
                 </TouchableOpacity>
 
@@ -76,7 +105,7 @@ export default function LoginScreen() {
 
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
