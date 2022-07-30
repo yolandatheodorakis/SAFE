@@ -1,43 +1,64 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Octicons} from '@expo/vector-icons';
 
 import Colors from '../constants/Colors';
+import ContactsStore from '../stores/ContactsStore';
 
 export default function ContactsScreen() {
     const navigation = useNavigation();
+    const store = ContactsStore;
+
+    const [number, setNumber] = useState('');
+    const [trigger, setTrigger] = useState('');
+
+    const addContactHandler = () => {
+        const newContact = {phone: `+358${number}`};
+        store.addNumber(newContact);
+        setTrigger('added');
+    };
+
+    const deleteContactHandler = (contact) => {
+        store.deleteNumber(contact);
+        setTrigger('deleted');
+    };
 
     const logout = () => {
         navigation.navigate('LoginScreen');
-    };
+    };   
+    
+    useEffect(() => {
+        setNumber('');
+        setTrigger('');
+    }, [trigger])
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>SAFE</Text>
 
             <ScrollView>
-
                 
-
-                <View style={styles.numberContainer}>
-                    <Text style={styles.numberText}>+358401234567</Text>
-                    <Octicons name={'trash'} size={20} color={Colors.black} />
-                </View>
-
-                <View style={styles.numberContainer}>
-                    <Text style={styles.numberText}>+358409873210</Text>
-                    <Octicons name={'trash'} size={20} color={Colors.black} />
-                </View>
+                {
+                    store.numbers.map((item, index) => 
+                        <View key={index} style={styles.numberContainer}>
+                            <Text style={styles.numberText}>{item.phone}</Text>
+                            <Octicons name={'trash'} size={20} color={Colors.black} onPress={() => deleteContactHandler(item)} />
+                        </View>
+                        
+                    )
+                }
 
                 <View style={styles.textInputContainer}>
                     <Text style={styles.areaCodeText}>+358</Text>
                     <TextInput 
+                        defaultValue={number}
+                        onChangeText={(text) => setNumber(text)}
                         placeholder='Lisää numero'
                         placeholderTextColor='silver'
                         style={styles.textInput}
                     />
-                    <Octicons name={'check-circle'} size={20} color={Colors.black} />
+                    <Octicons name={'check-circle'} size={20} color={Colors.black} onPress={() => addContactHandler()} />
                 </View>
 
             </ScrollView>
@@ -67,7 +88,7 @@ const styles = StyleSheet.create({
         fontFamily: 'prisma',
         fontSize: 50,
         alignSelf: 'center',
-        marginBottom: 100,
+        marginBottom: 30,
         paddingVertical: 40
 	},
     numberContainer: {

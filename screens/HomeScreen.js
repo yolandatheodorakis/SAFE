@@ -5,14 +5,18 @@ import {Octicons} from '@expo/vector-icons';
 import * as Location from 'expo-location';
 
 import Colors from '../constants/Colors';
+import ContactsStore from '../stores/ContactsStore';
 
 export default function HomeScreen() {
     const navigation = useNavigation();
+    const store = ContactsStore;
+
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     let coordinates;
     let message;
+    let numbersList = [];
 
     useEffect(() => {
         (async () => {
@@ -25,6 +29,8 @@ export default function HomeScreen() {
             let location = await Location.getCurrentPositionAsync({});
             setLatitude(location.coords.latitude)
             setLongitude(location.coords.longitude);
+
+            numbersList = store.numbers.map((item) => item.phone);
         })();
     }, []);
 
@@ -53,7 +59,7 @@ export default function HomeScreen() {
 
             <ScrollView>
 
-                <TouchableOpacity style={styles.sendButton} onPress={() => sendMessage(['+358409602197'], message)}>
+                <TouchableOpacity style={styles.sendButton} onPress={() => sendMessage(numbersList, message)}>
                     <Text style={styles.sendText}>LÄHETÄ SIJAINTITIEDOT</Text>
                 </TouchableOpacity>
 
